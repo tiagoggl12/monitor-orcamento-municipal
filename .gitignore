@@ -170,8 +170,6 @@ credentials.json
 # Backups
 # ====================================
 *.bak
-*.backup
-backup/
 
 # ====================================
 # Específicos do Projeto
