@@ -104,6 +104,7 @@ uploads/
 
 # Banco de dados local
 *.db
+!backup/app.db
 *.sqlite
 *.sqlite3
 backend/data/*.db
