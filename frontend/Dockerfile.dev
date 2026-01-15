@@ -1,0 +1,19 @@
+# Development Dockerfile - Vite Dev Server com Hot Reload
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json ./
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+
+# Copy source (será sobrescrito pelos volumes)
+COPY . .
+
+EXPOSE 4000
+
+# Dev server será iniciado via command no docker-compose
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "4000"]
+

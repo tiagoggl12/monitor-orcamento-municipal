@@ -1,0 +1,185 @@
+# ====================================
+# Monitor de Orçamento Público Municipal
+# Docker Compose Configuration
+# ====================================
+
+version: '3.8'
+
+services:
+  # ====================================
+  # Backend - FastAPI
+  # ====================================
+  backend:
+    build: ./backend
+    container_name: monitor_backend
+    ports:
+      - "${BACKEND_PORT:-4001}:8000"
+    volumes:
+      - uploaded_docs:/app/data/uploads
+      - sqlite_data:/app/data
+      - ./backend/app:/app/app  # Hot reload em desenvolvimento
+      - ./backup:/app/backup:ro
+    environment:
+      # API Keys
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-pro}
+      
+      # Database
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///data/app.db}
+      
+      # ChromaDB
+      - CHROMADB_HOST=chromadb
+      - CHROMADB_PORT=8000
+      
+      # Redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      
+      # Portal da Transparência
+      - PORTAL_BASE_URL=${PORTAL_BASE_URL:-https://dados.fortaleza.ce.gov.br}
+      - PORTAL_API_VERSION=${PORTAL_API_VERSION:-3}
+      - PORTAL_TIMEOUT=${PORTAL_TIMEOUT:-30}
+      
+      # Upload
+      - MAX_UPLOAD_SIZE_MB=${MAX_UPLOAD_SIZE_MB:-50}
+      - UPLOAD_DIR=/app/data/uploads
+      
+      # Processing
+      - CHUNK_SIZE=${CHUNK_SIZE:-1000}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP:-200}
+      
+      # Cache
+      - CACHE_TTL_PACKAGES=${CACHE_TTL_PACKAGES:-3600}
+      - CACHE_TTL_RESPONSES=${CACHE_TTL_RESPONSES:-600}
+      
+      # CORS
+      - CORS_ORIGINS=http://localhost:${FRONTEND_PORT:-4000},http://127.0.0.1:${FRONTEND_PORT:-4000}
+      
+      # Environment
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-true}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      
+      # Security
+      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
+      
+      # Celery
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    
+    depends_on:
+      chromadb:
+        condition: service_started
+      redis:
+        condition: service_started
+    
+    networks:
+      - monitor_network
+    
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ====================================
+  # ChromaDB - Vector Database
+  # ====================================
+  chromadb:
+    image: chromadb/chroma:0.5.5
+    container_name: monitor_chromadb
+    ports:
+      - "${CHROMADB_PORT:-8001}:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+    environment:
+      - ALLOW_RESET=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+    networks:
+      - monitor_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ====================================
+  # Redis - Cache & Message Broker
+  # ====================================
+  redis:
+    image: redis:7-alpine
+    container_name: monitor_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - monitor_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ====================================
+  # Frontend - React + Vite
+  # ====================================
+  frontend:
+    build: ./frontend
+    container_name: monitor_frontend
+    ports:
+      - "${FRONTEND_PORT:-4000}:4000"
+    environment:
+      - VITE_API_URL=http://localhost:${BACKEND_PORT:-4001}/api
+    depends_on:
+      - backend
+    networks:
+      - monitor_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# ====================================
+# Networks
+# ====================================
+networks:
+  monitor_network:
+    driver: bridge
+    name: monitor_network
+
+# ====================================
+# Volumes (Persistência de Dados)
+# ====================================
+volumes:
+  # PDFs enviados pelos usuários
+  uploaded_docs:
+    name: monitor_uploaded_docs
+    driver: local
+  
+  # Banco de dados SQLite
+  sqlite_data:
+    name: monitor_sqlite_data
+    driver: local
+  
+  # Dados vetoriais do ChromaDB
+  chromadb_data:
+    name: monitor_chromadb_data
+    driver: local
+  
+  # Cache do Redis
+  redis_data:
+    name: monitor_redis_data
+    driver: local
+
