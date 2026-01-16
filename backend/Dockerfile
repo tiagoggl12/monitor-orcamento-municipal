@@ -32,6 +32,9 @@ RUN pip install --upgrade pip && \
 COPY ./app ./app
 COPY ./entrypoint.sh /entrypoint.sh
 
+# Dar permissão de execução ao entrypoint
+RUN chmod +x /entrypoint.sh
+
 # Criar diretórios necessários
 RUN mkdir -p /app/data/uploads && \
     mkdir -p /app/logs

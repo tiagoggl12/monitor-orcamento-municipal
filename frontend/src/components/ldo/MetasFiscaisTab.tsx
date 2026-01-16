@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ldoApi, type MetasFiscaisData } from '../../services/api';
-import { TrendingUp, TrendingDown, AlertCircle, DollarSign, Target, BarChart3, Info } from 'lucide-react';
+import { AlertCircle, DollarSign, Target, BarChart3, Info } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface MetasFiscaisTabProps {
@@ -314,7 +314,7 @@ export default function MetasFiscaisTab({ ano }: MetasFiscaisTabProps) {
             <h3 className="text-lg font-bold text-gray-900">Premissas Macroeconômicas</h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {Object.entries(data.premissas_macroeconomicas).map(([chave, valor]) => {
+            {Object.entries(data.premissas_macroeconomicas).map(([chave, valor]: [string, number]) => {
               const labels: Record<string, string> = {
                 pib_crescimento: 'Crescimento do PIB',
                 inflacao_ipca: 'Inflação IPCA',
@@ -334,7 +334,7 @@ export default function MetasFiscaisTab({ ano }: MetasFiscaisTabProps) {
                       ? `R$ ${valor}`
                       : chave.includes('salario')
                       ? `R$ ${valor}`
-                      : valor}
+                      : String(valor)}
                   </p>
                 </div>
               );
@@ -352,7 +352,7 @@ export default function MetasFiscaisTab({ ano }: MetasFiscaisTabProps) {
           </p>
           {data.renuncias_receita.detalhes && data.renuncias_receita.detalhes.length > 0 && (
             <div className="space-y-3">
-              {data.renuncias_receita.detalhes.map((renuncia, idx) => (
+              {data.renuncias_receita.detalhes.map((renuncia: MetasFiscaisData['renuncias_receita']['detalhes'][0], idx: number) => (
                 <div key={idx} className="border-l-4 border-red-400 pl-4 py-2">
                   <div className="flex justify-between items-start">
                     <div>

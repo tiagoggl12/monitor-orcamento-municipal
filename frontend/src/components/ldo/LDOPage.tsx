@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ldoApi, type ExercicioLDO } from '../../services/api';
-import { FileText, Target, TrendingUp, AlertTriangle, Users } from 'lucide-react';
+import { FileText, Target, TrendingUp, AlertTriangle } from 'lucide-react';
 import MetasPrioridadesTab from './MetasPrioridadesTab';
 import MetasFiscaisTab from './MetasFiscaisTab';
 import RiscosFiscaisTab from './RiscosFiscaisTab';

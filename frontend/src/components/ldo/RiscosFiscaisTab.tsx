@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ldoApi, type RiscosFiscaisData } from '../../services/api';
-import { AlertTriangle, AlertCircle, TrendingUp, TrendingDown, Shield, Info } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { AlertCircle, Shield, Info, TrendingDown } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface RiscosFiscaisTabProps {
   ano: number | null;
@@ -114,7 +114,7 @@ export default function RiscosFiscaisTab({ ano }: RiscosFiscaisTabProps) {
   }, {});
 
   const categoriaChartData = riscosPorCategoria
-    ? Object.entries(riscosPorCategoria).map(([categoria, valor]) => ({
+    ? Object.entries(riscosPorCategoria).map(([categoria, valor]: [string, number]) => ({
         name: categoria.charAt(0).toUpperCase() + categoria.slice(1),
         value: valor / 1000000, // Em milhões
       }))
@@ -198,7 +198,7 @@ export default function RiscosFiscaisTab({ ano }: RiscosFiscaisTabProps) {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {categoriaChartData.map((entry, index) => (
+                {categoriaChartData.map((_entry, index: number) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -213,7 +213,7 @@ export default function RiscosFiscaisTab({ ano }: RiscosFiscaisTabProps) {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Riscos Identificados</h3>
           <div className="space-y-4">
-            {data.riscos.map((risco, idx) => (
+            {data.riscos.map((risco: RiscosFiscaisData['riscos'][0], idx: number) => (
               <div
                 key={idx}
                 className={`border-l-4 pl-4 py-3 rounded-r-lg ${
@@ -287,7 +287,7 @@ export default function RiscosFiscaisTab({ ano }: RiscosFiscaisTabProps) {
           </p>
           {data.passivos_contingentes.detalhes && data.passivos_contingentes.detalhes.length > 0 && (
             <div className="space-y-3">
-              {data.passivos_contingentes.detalhes.map((passivo, idx) => (
+              {data.passivos_contingentes.detalhes.map((passivo: RiscosFiscaisData['passivos_contingentes']['detalhes'][0], idx: number) => (
                 <div key={idx} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div>
@@ -330,7 +330,7 @@ export default function RiscosFiscaisTab({ ano }: RiscosFiscaisTabProps) {
           </p>
           {data.demandas_judiciais.detalhes && data.demandas_judiciais.detalhes.length > 0 && (
             <div className="space-y-3">
-              {data.demandas_judiciais.detalhes.map((demanda, idx) => (
+              {data.demandas_judiciais.detalhes.map((demanda: any, idx: number) => (
                 <div key={idx} className="border border-gray-200 rounded-lg p-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>

@@ -26,53 +26,53 @@ help:
 # ====================================
 dev:
 	@echo "🚀 Iniciando ambiente de DESENVOLVIMENTO (Hot Reload)..."
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 dev-build:
 	@echo "🔨 Rebuilding frontend dev..."
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml build frontend
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml build frontend
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 dev-logs:
 	@echo "📋 Logs do ambiente de desenvolvimento:"
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs -f
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml logs -f
 
 dev-down:
 	@echo "🛑 Parando ambiente de desenvolvimento..."
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml down
 
 # ====================================
 # PRODUÇÃO (Build Otimizado)
 # ====================================
 prod:
 	@echo "🚀 Iniciando ambiente de PRODUÇÃO..."
-	docker-compose up -d
+	docker compose up -d
 
 up: prod
 
 build:
 	@echo "🔨 Rebuilding ambiente de produção..."
-	docker-compose build --no-cache
-	docker-compose up -d
+	docker compose build --no-cache
+	docker compose up -d
 
 # ====================================
 # GERAL
 # ====================================
 down:
 	@echo "🛑 Parando todos os containers..."
-	docker-compose down
+	docker compose down
 
 restart:
 	@echo "🔄 Reiniciando containers..."
-	docker-compose restart
+	docker compose restart
 
 logs:
 	@echo "📋 Logs dos containers:"
-	docker-compose logs -f
+	docker compose logs -f
 
 clean:
 	@echo "🧹 Limpando containers, volumes e imagens..."
-	docker-compose down -v --rmi all
+	docker compose down -v --rmi all
 	@echo "✅ Limpeza concluída!"
 
 # ====================================
@@ -81,13 +81,13 @@ clean:
 backup-db:
 	@echo "💾 Criando backup do banco..."
 	mkdir -p backup
-	docker-compose exec -T backend sh -lc 'cp /app/data/app.db /tmp/app.db'
-	docker-compose cp backend:/tmp/app.db ./backup/app.db
+	docker compose exec -T backend sh -lc 'cp /app/data/app.db /tmp/app.db'
+	docker compose cp backend:/tmp/app.db ./backup/app.db
 	@echo "✅ Backup salvo em ./backup/app.db"
 
 restore-db:
 	@echo "♻️  Restaurando banco do backup..."
-	docker-compose exec -T backend sh -lc 'cp /app/backup/app.db /app/data/app.db'
+	docker compose exec -T backend sh -lc 'cp /app/backup/app.db /app/data/app.db'
 	@echo "✅ Banco restaurado"
 
 # ====================================

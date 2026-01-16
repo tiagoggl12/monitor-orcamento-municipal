@@ -417,6 +417,15 @@ import type {
   PoliticasSetoriaisData
 } from '../types';
 
+// Re-exportar tipos LDO para uso nos componentes
+export type {
+  ExercicioLDO,
+  MetasPrioridadesData,
+  MetasFiscaisData,
+  RiscosFiscaisData,
+  PoliticasSetoriaisData
+} from '../types';
+
 export const ldoApi = {
   listExercicios: async (municipio: string = 'Fortaleza'): Promise<ExercicioLDO[]> => {
     const response = await api.get('/ldo/exercicios', { params: { municipio } });

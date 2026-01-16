@@ -107,7 +107,7 @@ export default function MetasPrioridadesTab({ ano }: MetasPrioridadesTabProps) {
           </div>
 
           <div className="space-y-4">
-            {data.prioridades.map((prioridade, idx) => (
+            {data.prioridades.map((prioridade: MetasPrioridadesData['prioridades'][0], idx: number) => (
               <div
                 key={idx}
                 className={`border-l-4 ${
@@ -169,7 +169,7 @@ export default function MetasPrioridadesTab({ ano }: MetasPrioridadesTabProps) {
           </div>
 
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {data.diretrizes_gerais.map((diretriz, idx) => (
+            {data.diretrizes_gerais.map((diretriz: string, idx: number) => (
               <li key={idx} className="flex items-start gap-2">
                 <div className="flex-shrink-0 w-2 h-2 bg-green-600 rounded-full mt-2"></div>
                 <span className="text-gray-700">{diretriz}</span>
@@ -185,7 +185,7 @@ export default function MetasPrioridadesTab({ ano }: MetasPrioridadesTabProps) {
           <h3 className="text-xl font-bold text-gray-900 mb-4">Metas Setoriais</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Object.entries(data.metas_setoriais).map(([setor, meta]) => (
+            {Object.entries(data.metas_setoriais).map(([setor, meta]: [string, MetasPrioridadesData['metas_setoriais'][string]]) => (
               <div key={setor} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-3 ${getSetorColor(setor)}`}>
                   {setor.charAt(0).toUpperCase() + setor.slice(1)}
@@ -232,7 +232,7 @@ export default function MetasPrioridadesTab({ ano }: MetasPrioridadesTabProps) {
           <h3 className="text-xl font-bold text-gray-900 mb-4">Programas Prioritários</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.programas_prioritarios.map((programa, idx) => (
+            {data.programas_prioritarios.map((programa: MetasPrioridadesData['programas_prioritarios'][0], idx: number) => (
               <div key={idx} className="border border-gray-200 rounded-lg p-4">
                 {programa.codigo && (
                   <span className="text-xs font-mono text-gray-500">Código {programa.codigo}</span>
@@ -253,13 +253,13 @@ export default function MetasPrioridadesTab({ ano }: MetasPrioridadesTabProps) {
           <h3 className="text-xl font-bold text-gray-900 mb-4">Diretrizes Setoriais</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Object.entries(data.diretrizes_setoriais).map(([setor, diretrizes]) => (
+            {Object.entries(data.diretrizes_setoriais).map(([setor, diretrizes]: [string, string[]]) => (
               <div key={setor}>
                 <h4 className={`font-semibold mb-2 px-3 py-1 rounded inline-block ${getSetorColor(setor)}`}>
                   {setor.charAt(0).toUpperCase() + setor.slice(1)}
                 </h4>
                 <ul className="mt-3 space-y-2">
-                  {diretrizes.map((diretriz, idx) => (
+                  {diretrizes.map((diretriz: string, idx: number) => (
                     <li key={idx} className="flex items-start gap-2 text-sm">
                       <div className="flex-shrink-0 w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5"></div>
                       <span className="text-gray-700">{diretriz}</span>
