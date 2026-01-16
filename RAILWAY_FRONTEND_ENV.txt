@@ -1,0 +1,3 @@
+VITE_API_URL=${{backend.RAILWAY_PUBLIC_DOMAIN}}
+VITE_APP_NAME=Monitor de Orçamento Público
+VITE_APP_VERSION=1.0.0
